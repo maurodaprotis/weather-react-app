@@ -1,26 +1,47 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styled, { createGlobalStyle } from 'styled-components';
+import { GeolocationProvider } from './context/GeolocationContext';
+import WeatherCard from './components/WeatherCard';
+
+const GlobalStyle = createGlobalStyle`
+  html {
+    box-sizing: border-box;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale; 
+
+    background-color: #f6f6f6;
+  }
+`;
+
+const AppStyles = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+`;
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <GeolocationProvider>
+        <GlobalStyle />
+        <AppStyles>
+          <WeatherCard />
+        </AppStyles>
+      </GeolocationProvider>
     );
   }
 }
