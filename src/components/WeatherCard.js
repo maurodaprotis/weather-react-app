@@ -81,12 +81,14 @@ const WeatherCardStyles = styled.div`
 `;
 
 const getFormatedTime = time =>
-  format(new Date(`${time} UTC`), 'EEEE | LLL d | h:mma', {
+  format(new Date(`${time} UTC`.replace(/-/g, '/')), 'EEEE | LLL d | h:mma', {
     awareOfUnicodeTokens: true,
   });
 
 const getFormatedHour = time =>
-  format(new Date(`${time} UTC`), 'kk:mm', { awareOfUnicodeTokens: true });
+  format(new Date(`${time} UTC`.replace(/-/g, '/')), 'kk:mm', {
+    awareOfUnicodeTokens: true,
+  });
 
 const WeatherCard = () => (
   <GeolocationContext.Consumer>
