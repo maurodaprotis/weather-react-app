@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { format } from 'date-fns';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import GeolocationContext from '../context/GeolocationContext';
 import Sun from '../icons/Sun';
 import Uv from '../icons/Uv';
 import Elevation from '../icons/Elevation';
@@ -90,73 +91,83 @@ const getFormatedHour = time =>
     awareOfUnicodeTokens: true,
   });
 
-const WeatherCard = () => (
-  <GeolocationContext.Consumer>
-    {({ weather, loading, error }) => {
-      if (loading) {
-        return (
-          <WeatherCardStyles>
-            <div>Loading...</div>
-          </WeatherCardStyles>
-        );
-      }
-      return (
-        <WeatherCardStyles>
-          <div>
-            <Sun />
+const WeatherCard = ({ loading, error, weather }) => {
+  if (loading) {
+    return (
+      <WeatherCardStyles>
+        <div>Loading...</div>
+      </WeatherCardStyles>
+    );
+  }
+  return (
+    <WeatherCardStyles>
+      <div>
+        <Sun />
+      </div>
+      <div className="temp">
+        <div className="current">{weather.temp}º</div>
+        <div className="maxmin">
+          Feels like {weather.app_temp}º | {weather.weather.description}
+        </div>
+      </div>
+      <div className="location">
+        <div className="city">{weather.city_name}</div>
+        <div className="time">{getFormatedTime(weather.ob_time)}</div>
+      </div>
+      <div className="hr" />
+      <div className="details">
+        <div className="center">
+          <Uv /> <div className="value">{weather.uv.toFixed(2)}</div>
+        </div>
+        <div className="center">
+          <Elevation />
+          <div className="value">{weather.elev_angle}º</div>
+        </div>
+        <div className="center">
+          <Cloud /> <div className="value">{weather.clouds}%</div>
+        </div>
+        <div className="center">
+          <Rain /> <div className="value">{weather.precip}%</div>
+        </div>
+        <div className="center">
+          <Wind />{' '}
+          <div className="value">
+            {parseFloat(weather.wind_spd * 3.6).toFixed(2)} km/h
           </div>
-          <div className="temp">
-            <div className="current">{weather.temp}º</div>
-            <div className="maxmin">
-              Feels like {weather.app_temp}º | {weather.weather.description}
-            </div>
+        </div>
+        <div className="center">
+          <WindDirection /> <div className="value">{weather.wind_cdir}</div>
+        </div>
+        <div className="center">
+          <Sunrise />{' '}
+          <div className="value">
+            {getFormatedHour(
+              `${weather.datetime.split(':')[0]} ${weather.sunrise}`
+            )}
           </div>
-          <div className="location">
-            <div className="city">{weather.city_name}</div>
-            <div className="time">{getFormatedTime(weather.ob_time)}</div>
-          </div>
-          <div className="hr" />
-          <div className="details">
-            <div className="center">
-              <Uv /> <div className="value">{weather.uv.toFixed(2)}</div>
-            </div>
-            <div className="center">
-              <Elevation />
-              <div className="value">{weather.elev_angle}º</div>
-            </div>
-            <div className="center">
-              <Cloud /> <div className="value">{weather.clouds}%</div>
-            </div>
-            <div className="center">
-              <Rain /> <div className="value">{weather.precip}%</div>
-            </div>
-            <div className="center">
-              <Wind />{' '}
-              <div className="value">
-                {parseFloat(weather.wind_spd * 3.6).toFixed(2)} km/h
-              </div>
-            </div>
-            <div className="center">
-              <WindDirection /> <div className="value">{weather.wind_cdir}</div>
-            </div>
-            <div className="center">
-              <Sunrise />{' '}
-              <div className="value">
-                {getFormatedHour(
-                  `${weather.datetime.split(':')[0]} ${weather.sunrise}`
-                )}
-              </div>
-            </div>
-            <div className="center">
-              <Sunset /> <div className="value">20:30</div>
-            </div>
-          </div>
-        </WeatherCardStyles>
-      );
-    }}
-  </GeolocationContext.Consumer>
-);
+        </div>
+        <div className="center">
+          <Sunset /> <div className="value">20:30</div>
+        </div>
+      </div>
+    </WeatherCardStyles>
+  );
+};
 
-WeatherCard.propTypes = {};
+WeatherCard.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.object,
+  weather: PropTypes.object,
+};
 
-export default WeatherCard;
+const mapStateToProps = state => {
+  const { loading, error, weather } = state.weather;
+
+  return {
+    loading,
+    error,
+    weather,
+  };
+};
+
+export default connect(mapStateToProps)(WeatherCard);

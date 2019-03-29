@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styled, { createGlobalStyle } from 'styled-components';
-import { GeolocationProvider } from './context/GeolocationContext';
+import { connect } from 'react-redux';
+import { fetchPositionAndWeather } from './redux/actions';
 import WeatherCard from './components/WeatherCard';
 
 const GlobalStyle = createGlobalStyle`
@@ -34,16 +36,25 @@ const AppStyles = styled.div`
 `;
 
 class App extends Component {
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired,
+  };
+
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(fetchPositionAndWeather());
+  }
+
   render() {
     return (
-      <GeolocationProvider>
+      <>
         <GlobalStyle />
         <AppStyles>
           <WeatherCard />
         </AppStyles>
-      </GeolocationProvider>
+      </>
     );
   }
 }
 
-export default App;
+export default connect()(App);
